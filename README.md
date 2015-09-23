@@ -16,4 +16,4 @@ This is kind of Smart Semantic IoT open-source router.
 
 ## controller
 
-SemIoT Gateway should be controlled via SemIoT Gateway Controller
+SemIoT Gateway should be controlled via [SemIoT Gateway Controller](https://github.com/semiotproject/semiot-gateway-controller)
