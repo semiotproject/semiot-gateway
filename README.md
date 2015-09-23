@@ -13,3 +13,7 @@ linux-based gateway providing discovery and unified control to all your home IoT
 This is kind of Smart Semantic IoT open-source router.
 
 ![ScreenShot](http://i.imgur.com/XtccbUa.png)
+
+## controller
+
+SemIoT Gateway should be controlled via SemIoT Gateway Controller
