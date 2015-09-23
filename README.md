@@ -12,7 +12,7 @@ linux-based gateway providing discovery and unified control to all your home IoT
 
 This is kind of Smart Semantic IoT open-source router.
 
-![Scheme](https://github.com/semiotproject/semiot-gateway/raw/master/scheme.svg)
+![Scheme](https://github.com/semiotproject/semiot-gateway/raw/master/scheme.png)
 
 ## controller
 
