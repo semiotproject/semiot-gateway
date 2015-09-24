@@ -13,7 +13,7 @@ to all your home IoT-devices.
 
 This is kind of Smart Semantic IoT open-source router.
 
-![Scheme](https://github.com/semiotproject/semiot-gateway/raw/master/scheme.svg)
+![Scheme](https://github.com/semiotproject/semiot-gateway/raw/master/scheme.png)
 
 ## Security
 SSL
@@ -55,4 +55,4 @@ INSERT DATA
 
 ## Controller
 
-SemIoT Gateway should be controlled via SemIoT Gateway Controller
+SemIoT Gateway should be controlled via [SemIoT Gateway Controller](https://github.com/semiotproject/semiot-gateway-controller)
