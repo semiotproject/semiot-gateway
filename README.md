@@ -18,8 +18,13 @@ This is kind of Smart Semantic IoT open-source router.
 ## Security
 SSL
 
+## Discovering gateways
+Auto-discovering local gateways (if not hidden) -- sending udp broadcast packet.
+Manually adding remote gateways (or via some additional search service).
+
 ## Sparql Endpoint
 
+Results of the requests are rendering by semiot-gateway-controller (client)
 
 ```
 SELECT ?resource
@@ -32,16 +37,24 @@ WHERE {
 ```
 SELECT ?user
 WHERE {
-  ?resource a semiot-gateway:resource.
-  ?resource semiot-gateway:read_access <user>.
+  <resource> a semiot-gateway:resource.
+  <resource> semiot-gateway:read_access ?user.
+}
+```
+
+```
+SELECT ?gateway
+WHERE {
+  ?gateway a semiot-gateway:gateway.
+  ?gateway semiot-gateway:location <here>.
 }
 ```
 
 ```
 INSERT DATA
 {
-  <resource> a semiot-gateway:resource;
-             semiot-gateway:gateway <gateway>.
+  <resource> a semiot-gateway:resource.
+  semiot-gateway:gateway <gateway>.
 }
 ```
 
