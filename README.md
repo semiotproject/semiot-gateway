@@ -15,8 +15,15 @@ This is kind of Smart Semantic IoT open-source router.
 
 ![Scheme](https://github.com/semiotproject/semiot-gateway/raw/master/scheme.png)
 
-## Security
-SSL
+## RoadMap:
+1. Semantic annotations:
+	+ devices rdf descriprions
+	    using helper descriprions (decide when exactly we should use helper)
+	+ raw packets parsing
+2. Gateway API (not only the RestAPI, HydraMedia hydra-cg)
+3. Mobile or Web UI
+4. Security (Access Rights, RW-rights, device-based access)
+	encrypted connection/transmission (TCP --> SSL, etc)
 
 ## Discovering gateways
 Auto-discovering local gateways (if not hidden) -- sending udp broadcast packet.
