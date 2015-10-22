@@ -4,9 +4,17 @@ import json
 
 cl = []
 
-def handle_input(fd, events):
+# hardcode... -___-)
+
+def handle_udp(fd, events):
     (data, source_addr) = udp_sock.recvfrom(4096)
     print(source_addr,": ",data)
+
+class ServicesHandler():
+    def loadConfig(config):
+        # for i in config array
+	# load plugin by name if not exists already
+        return False
 
 class IndexHandler(web.RequestHandler):
     def get(self):
@@ -57,5 +65,5 @@ if __name__ == '__main__':
     udp_sock.bind(('', 5555))
     udp_sock.setblocking(0)
     io_loop = ioloop.IOLoop.instance()
-    io_loop.add_handler(udp_sock.fileno(), handle_input, io_loop.READ)
+    io_loop.add_handler(udp_sock.fileno(), handle_udp, io_loop.READ)
     io_loop.start()
