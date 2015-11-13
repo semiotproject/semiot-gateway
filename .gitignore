@@ -1,2 +1,6 @@
 .imdone*
 .directory
+.gitignore.swp
+src/build*
+*.pro.user
+*~

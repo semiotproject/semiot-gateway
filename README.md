@@ -1,2 +1,4 @@
-#TODO: README.md
-`python app.py`
+# SemIoT Gateway
+
++ device driver example:
+`/src/config.qml`
