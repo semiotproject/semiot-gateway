@@ -1,10 +1,10 @@
 import QtQuick 2.2
-import "./" as ConfigDir // register as custom library
+import "./" as ConfigDir // register as custom library like
+// import org.semiot.gateway 0.1
 
 ConfigDir.SemIoTDeviceConfig {
     driverName: "udp";
     driverInitArgs: {"port": 55555}
-    property string deviceName
     onNewDataPacketReceived: {
         // PACKET FORMAT (15 bytes):
         // MAC -- 6 bytes
@@ -14,49 +14,67 @@ ConfigDir.SemIoTDeviceConfig {
         var mac = macFromData(dataPacket.data)
         var temperature = floatFromData(dataPacket.data,6+1+4)
         var humidity = floatFromData(dataPacket.data,6+1)
+        // TODO: deviceNameHashGenerator
         deviceName = "dht11-"+mac+"-"+dataPacket.senderHost+"-"+dataPacket.senderPort
+        //
+        deviceName = hashName("dht11",mac,dataPacket.senderHost,dataPacket.senderPort)
 
-        descriptionDesc = descriptionDesc.replace(/\${MAC}/g, mac)
-        temperatureDesc = temperatureDesc.replace(/\${TIMESTAMP}/g, dataPacket.timeStamp)
-        temperatureDesc = temperatureDesc.replace(/\${DATETIME}/g, dataPacket.dateTime)
-        temperatureDesc = temperatureDesc.replace(/\${HOST}/g, dataPacket.senderHost)
-        temperatureDesc = temperatureDesc.replace(/\${PORT}/g, dataPacket.senderPort)
-        temperatureDesc = temperatureDesc.replace(/\${VALUE}/g, temperature)
+        var descriptionMap = {
+           '\\${MAC}':mac
+        };
+
+        var temperatureMap = {
+            '\\${MAC}':mac,
+            '\\${TIMESTAMP}':dataPacket.timeStamp,
+            '\\${DATETIME}':dataPacket.dateTime,
+            '\\${HOST}':dataPacket.senderHost,
+            '\\${PORT}':dataPacket.senderPort,
+            '\\${VALUE}':temperature
+        };
+
+        descriptionDesc = replaceAll(descriptionDescSrc, descriptionMap)
+        temperatureDesc = replaceAll(temperatureDescSrc, temperatureMap)
+
         // NOTE: is that ok that we decide here how to organize ws pathes?
-        newDataReady(deviceName+"/description",descriptionDesc)
-        newDataReady(deviceName+"/temperature",temperatureDesc)
+        newDataReady("/"+driverName+"/"+deviceName+"/description",descriptionDesc)
+        newDataReady("/"+driverName+"/"+deviceName+"/temperature",temperatureDesc)
     }
 
-    property string descriptionDesc : '
+    property string deviceName
+
+    property string descriptionDesc : ''
+    property string temperatureDesc : ''
+
+    property string descriptionDescSrc : '
         @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
         @prefix ssn: <http://purl.oclc.org/NET/ssnx/ssn#> .
         @prefix hmtr: <http://purl.org/NET/ssnext/heatmeters#> .
         @prefix ssncom: <http://purl.org/NET/ssnext/communication#> .
 
-        <http://prototype.com/${MAC}> a hmtr:HeatMeter ;
+        <http://semiot.gateway/${MAC}> a hmtr:HeatMeter ;
             rdfs:label "Semiot device prototype #${MAC}"@en ;
-            ssn:hasSubSystem <http://prototype.com/${MAC}/prototype> .
+            ssn:hasSubSystem <http://semiot.gateway/${MAC}/prototype> .
 
-        <http://prototype.com/${MAC}/prototype>  a ssn:Sensor ;
-            ssncom:hasCommunicationEndpoint <http://prototype.com/topic=${MAC}.prototype.obs> .
+        <http://semiot.gateway/${MAC}/prototype>  a ssn:Sensor ;
+            ssncom:hasCommunicationEndpoint <http://semiot.gateway/topic=${MAC}.prototype.obs> .
 
-        <http://prototype.com/topic=${MAC}.prototype.obs> a ssncom:CommunicationEndpoint ;
+        <http://semiot.gateway/topic=${MAC}.prototype.obs> a ssncom:CommunicationEndpoint ;
             ssncom:protocol "WAMP" .
     ';
-    property string temperatureDesc : '
+    property string temperatureDescSrc : '
     @prefix hmtr: <http://purl.org/NET/ssnext/heatmeters#> .
     @prefix meter: <http://purl.org/NET/ssnext/meters/core#> .
     @prefix ssn: <http://purl.oclc.org/NET/ssnx/ssn#> .
     @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-    @prefix : <http://prototype.com/${MAC}/prototype#> .
+    @prefix : <http://semiot.gateway/${MAC}/prototype#> .
 
     :${TIMESTAMP} a hmtr:TemperatureObservation ;
         ssn:observationResultTime "${DATETIME}"^^xsd:dateTime ;
-        ssn:observedBy <coap://${HOST}:${PORT}/meter> ;
+        ssn:observedBy <udp://${HOST}:${PORT}> ;
         ssn:observationResult :${TIMESTAMP}-result .
 
     :${TIMESTAMP}-result a hmtr:TemperatureSensorOutput ;
-        ssn:isProducedBy <coap://${HOST}:${PORT}/meter> ;
+        ssn:isProducedBy <udp://${HOST}:${PORT}> ;
         ssn:hasValue :${TIMESTAMP}-resultvalue .
 
     :${TIMESTAMP}-resultvalue a hmtr:TemperatureValue ;
@@ -65,6 +83,23 @@ ConfigDir.SemIoTDeviceConfig {
     ';
 
     // utils: NOTE: should probably move to udp driver
+    function replaceAll(str,mapObj){
+        var re = new RegExp(Object.keys(mapObj).join("|"),"g");
+
+        return str.replace(re, function(matched){
+            return mapObj[matched.replace(/[<>*()?$]/g, "\\$&")]; // :(
+        });
+    }
+
+    function hashName(modelName,macAddr,host,port) {
+        var str = modelName+macAddr+host+port
+        var hash = 5381,
+            i = modelName.length
+        while(i)
+          hash = (hash * 33) ^ modelName.charCodeAt(--i)
+        return (hash >>> 0).toString();
+    }
+
     function byteToHex(b) {
         var hexChar = ["0", "1", "2", "3", "4", "5", "6", "7","8", "9", "A", "B", "C", "D", "E", "F"];
         return hexChar[(b >> 4) & 0x0f] + hexChar[b & 0x0f];
