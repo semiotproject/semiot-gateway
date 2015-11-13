@@ -64,7 +64,7 @@ void UDPDriver::processTheDatagram(QByteArray * datagram, quint16 port, QHostAdd
     QVariantMap map;
 
     map.insert("data", data);
-    map.insert("timestamp", QDateTime::currentDateTime().toTime_t());
+    map.insert("timeStamp", QDateTime::currentDateTime().toTime_t());
     map.insert("dateTime", QDateTime::currentDateTime().toTimeSpec(Qt::UTC).toString());
     map.insert("senderHost", address->toString()); // NOTE: QString, rly?
     map.insert("senderPort", port);

@@ -32,8 +32,9 @@ void WebSocketServer::_onNewConnection()
     connect(pSocket, &QWebSocket::disconnected, this, &WebSocketServer::_socketDisconnected);
 
     _clients << pSocket;
-    if (_debug)
-        qDebug() << pSocket->requestUrl().path();
+    if (_debug) {
+        //qDebug() << pSocket->requestUrl().path();
+    }
     pSocket->sendTextMessage(getValueByResourcePath(pSocket->requestUrl().path()));
 }
 
@@ -51,8 +52,8 @@ void WebSocketServer::_socketDisconnected()
 QString WebSocketServer::getValueByResourcePath(QString resourcePath)
 {
     if (_debug) {
-        qDebug() << "getValueByResourcePath:"<<resourcePath
-                 <<": "<<_currentResourcesValues.value(resourcePath);
+        //qDebug() << "getValueByResourcePath:"<<resourcePath
+        //         <<": "<<_currentResourcesValues.value(resourcePath);
         // qDebug() << _wellKnownCore.join(';');
     }
     return _currentResourcesValues[resourcePath];
@@ -61,10 +62,16 @@ QString WebSocketServer::getValueByResourcePath(QString resourcePath)
 void WebSocketServer::processNewData(QString resourcePath, QString value)
 {
     if (_debug) {
-        qDebug() << "processNewData resourcePath:" << resourcePath;
-        qDebug() << "processNewData value:" << value;
+        //qDebug() << "processNewData resourcePath:" << resourcePath;
+        //qDebug() << "processNewData value:" << value;
     }
-    _currentResourcesValues.insert(resourcePath,value);
+    if (_currentResourcesValues.contains(resourcePath)) {
+        _currentResourcesValues[resourcePath]=value;
+    }
+    else {
+        _currentResourcesValues.insert(resourcePath,value);
+    }
+
     foreach (QWebSocket* socket, _clients) {
         QString socketRequestUrlPath = socket->requestUrl().path();
         if (_debug) {
@@ -80,7 +87,7 @@ void WebSocketServer::processNewData(QString resourcePath, QString value)
     }
     if (!(_wellKnownCore.contains(resourcePath))) {
         _wellKnownCore.append(resourcePath);
-        QString wellKnowCoreValue = _wellKnownCore.join(';');
+        QString wellKnowCoreValue = _wellKnownCore.join(";\n");
         processNewData(WELLKNOWNCOREPATH,wellKnowCoreValue);
     }
 }
