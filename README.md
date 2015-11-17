@@ -1,4 +1,4 @@
 # SemIoT Gateway
 
 + device driver example:
-`/src/config.qml`
+`/src/semiot-gateway-server/config.qml`

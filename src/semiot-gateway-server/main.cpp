@@ -1,10 +1,11 @@
 #include <QCoreApplication>
 #include <QtCore/QCommandLineParser>
 #include <QtCore/QCommandLineOption>
-#include "websocketserver.h"
-#include "udpdriver.h" // TODO: load as plugin
 #include <QtQml>
+#include <QQmlEngine>
 #include <QDebug>
+#include "websocketserver.h"
+#include "devicesconfigsloader.h"
 
 int main(int argc, char *argv[])
 {
@@ -13,6 +14,8 @@ int main(int argc, char *argv[])
     QCommandLineParser parser;
     parser.setApplicationDescription("SemIoT gateway");
     parser.addHelpOption();
+
+    // TODO: miltiple devices
 
     QCommandLineOption dbgOption(QStringList() << "d" << "debug",
             QCoreApplication::translate("main", "Debug output [default: off]."));
@@ -28,19 +31,12 @@ int main(int argc, char *argv[])
 
     WebSocketServer *server = new WebSocketServer(port, debug);
     QObject::connect(server, &WebSocketServer::closed, &a, &QCoreApplication::quit);
-    // TODO: load as plugins:
-    UDPDriver *udpDriver = new UDPDriver(debug);
-    udpDriver->addDataSource(55555);
 
-    // TODO: methods to load from url
-    // declarative stuff:
-    QQmlEngine engine;
-    QQmlComponent component(&engine, "./config.qml");
-    QObject *object = component.create();
-    // TODO: connect if driver names are equal
-    // qDebug()<<object->property("driverName");
-    QObject::connect(udpDriver,SIGNAL(newDataReady(QVariant)),object,SIGNAL(newDataPacketReceived(QVariant)));
-    QObject::connect(object,SIGNAL(newDataReady(QString,QString)),server,SLOT(processNewData(QString,QString)));
+    DevicesConfigsLoader devicesConfigsLoader;
+
+    QObject::connect(&devicesConfigsLoader,SIGNAL(newDataReady(QString,QString)),server,SLOT(processNewData(QString,QString)));
+    // FIXME:
+    devicesConfigsLoader.addConfig(QUrl::fromLocalFile("./config.qml"));
     return a.exec();
 }
 

@@ -1,10 +1,11 @@
 import QtQuick 2.2
-import "./" as ConfigDir // register as custom library like
-// import org.semiot.gateway 0.1
+import ru.semiot.gateway 0.1
 
-ConfigDir.SemIoTDeviceConfig {
+SemIoTDeviceConfig {
     driverName: "udp";
-    driverInitArgs: {"port": 55555}
+    onDriverReady: {
+        addDriverDataSource({"port":55555})
+    }
     onNewDataPacketReceived: {
         // PACKET FORMAT (15 bytes):
         // MAC -- 6 bytes
