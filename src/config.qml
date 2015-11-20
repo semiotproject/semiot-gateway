@@ -2,6 +2,7 @@ import QtQuick 2.2
 import ru.semiot.gateway 0.1
 
 SemIoTDeviceConfig {
+    // NOTE: is that ok that system driver is only one per device driver?
     driverName: "udp";
     onDriverConnected: {
         addDriverDataSource({"port":55555})
@@ -95,9 +96,9 @@ SemIoTDeviceConfig {
     function hashName(modelName,macAddr,host,port) {
         var str = modelName+macAddr+host+port
         var hash = 5381,
-            i = modelName.length
+            i = str.length
         while(i)
-          hash = (hash * 33) ^ modelName.charCodeAt(--i)
+          hash = (hash * 33) ^ str.charCodeAt(--i)
         return (hash >>> 0).toString();
     }
 

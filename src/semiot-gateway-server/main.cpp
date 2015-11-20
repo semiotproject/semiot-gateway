@@ -22,8 +22,8 @@ int main(int argc, char *argv[])
     parser.addOption(dbgOption);
     // TODO: get rid of magic default port:
     QCommandLineOption portOption(QStringList() << "p" << "port",
-            QCoreApplication::translate("main", "Port for gateway server [default: 123400]."),
-            QCoreApplication::translate("main", "port"), QLatin1Literal("123400"));
+            QCoreApplication::translate("main", "Port for gateway server [default: 57864]."),
+            QCoreApplication::translate("main", "port"), QLatin1Literal("57864"));
     parser.addOption(portOption);
     parser.process(a);
     bool debug = parser.isSet(dbgOption);
