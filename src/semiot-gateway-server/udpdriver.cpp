@@ -1,5 +1,8 @@
 #include "udpdriver.h"
-#include <QVariantList>
+#include <QJsonObject>
+#include <QVariantMap>
+#include <QJsonArray>
+#include <QJSValue>
 
 UDPDriver::UDPDriver(bool debug, QObject *parent) : QObject(parent),
   _debug(debug)
@@ -15,6 +18,18 @@ void UDPDriver::discoverDataSources(int port)
 void UDPDriver::addDataSource(quint16 port, const QHostAddress & address)
 {
     return addSocket(port,address);
+}
+
+void UDPDriver::addDriverDataSource(QVariant params)
+{
+    bool ok;
+    auto jsv = params.value<QJSValue>(); // FIXME
+    addDataSource(jsv.property("port").toUInt());
+}
+
+QString UDPDriver::getDriverName()
+{
+    return _driverName;
 }
 
 void UDPDriver::readPendingDatagrams()

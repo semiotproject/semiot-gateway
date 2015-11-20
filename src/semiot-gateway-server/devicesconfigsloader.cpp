@@ -1,23 +1,28 @@
 #include "devicesconfigsloader.h"
-#include <QtQml>
+#include "deviceconfig.h"
 
 DevicesConfigsLoader::DevicesConfigsLoader(bool debug, QObject *parent) : QObject(parent)
 {
-    qmlRegisterType(QUrl("qrc:/SemIoTDeviceConfig.qml"),"ru.semiot.gateway",0,1,"SemIoTDeviceConfig");
+    _engine = new QQmlEngine(this);
+    qmlRegisterType<DeviceConfig>("ru.semiot.gateway",0,1,"SemIoTDeviceConfig");
     //FIXME:
-    udpDriver = new UDPDriver(debug);
-    udpDriver->addDataSource(55555);
+    _udpDriver = new UDPDriver(debug);
 }
 
 void DevicesConfigsLoader::addConfig(QUrl configUrl)
 {
-    // FIXME:
-    QQmlEngine* engine = new QQmlEngine(this);
-    QQmlComponent* component = new QQmlComponent(engine,configUrl);
+    // FIXME: forgetten pointers
+    QQmlComponent* component = new QQmlComponent(_engine,configUrl);
     QObject *object = component->create();
-    // TODO: connect if driver names are equal
-    // qDebug()<<object->property("driverName");
-    QObject::connect(udpDriver,SIGNAL(newDataReady(QVariant)),object,SIGNAL(newDataPacketReceived(QVariant)));
-    QObject::connect(object,SIGNAL(newDataReady(QString,QString)),this,SIGNAL(newDataReady(QString,QString)));
+    // TODO: driversList:
+    if (object->property("driverName")==_udpDriver->getDriverName()) {
+        QObject::connect(_udpDriver,SIGNAL(newDataReady(QVariant)),object,SIGNAL(newDataPacketReceived(QVariant)));
+        QObject::connect(object,SIGNAL(newDataReady(QString,QString)),this,SIGNAL(newDataReady(QString,QString)));
+        QObject::connect(object,SIGNAL(addDriverDataSource(QVariant)),_udpDriver,SLOT(addDriverDataSource(QVariant)));
+        DeviceConfig* device_object = dynamic_cast<DeviceConfig*>(object);
+        if (true) {// TODO: if connect success
+            emit device_object->driverConnected();
+        }
+    }
 }
 

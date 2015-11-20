@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
 
     QObject::connect(&devicesConfigsLoader,SIGNAL(newDataReady(QString,QString)),server,SLOT(processNewData(QString,QString)));
     // FIXME:
-    devicesConfigsLoader.addConfig(QUrl::fromLocalFile("./config.qml"));
+    devicesConfigsLoader.addConfig(QUrl::fromLocalFile("/home/a_andreyev/code/semiot/semiot-gateway/src/config.qml"));
     return a.exec();
 }
 

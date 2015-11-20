@@ -11,12 +11,13 @@ TEMPLATE = app
 SOURCES += main.cpp \
     websocketserver.cpp \
     udpdriver.cpp \
-    devicesconfigsloader.cpp
+    devicesconfigsloader.cpp \
+    deviceconfig.cpp
 
 HEADERS += \
     websocketserver.h \
     udpdriver.h \
-    devicesconfigsloader.h
+    devicesconfigsloader.h \
+    deviceconfig.h
 
-RESOURCES += \
-    res.qrc
+RESOURCES +=

@@ -3,7 +3,7 @@ import ru.semiot.gateway 0.1
 
 SemIoTDeviceConfig {
     driverName: "udp";
-    onDriverReady: {
+    onDriverConnected: {
         addDriverDataSource({"port":55555})
     }
     onNewDataPacketReceived: {

@@ -3,7 +3,6 @@
 
 #include <QObject>
 #include <QUdpSocket>
-#include <QVariantMap>
 #include <QDateTime>
 
 class UDPDriver : public QObject
@@ -18,6 +17,8 @@ signals:
 public slots:
     void discoverDataSources(int port); // TODO: string config
     void addDataSource(quint16 port, const QHostAddress & address = QHostAddress::Any);
+    void addDriverDataSource(QVariant params);
+    QString getDriverName();
 
 private slots:
     void readPendingDatagrams();
