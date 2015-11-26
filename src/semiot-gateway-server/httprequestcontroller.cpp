@@ -9,21 +9,25 @@ HttpRequestController::HttpRequestController(QObject *parent) : HttpRequestHandl
 
 void HttpRequestController::service(HttpRequest &request, HttpResponse &response)
 {
+    QFile answerFile;
     QString requestPath = request.getPath();
     if (requestPath=="/api") {
-        QFile answerFile(":/hydrajsons/api.json");
+        answerFile.setFileName(":/hydrajsons/api.json");
         answerFile.open(QFile::ReadOnly | QFile::Text);
         response.write(answerFile.readAll(),true);
+        answerFile.close();
     }
     else if (requestPath=="/api/doc") {
-        QFile answerFile(":/hydrajsons/api.doc.json");
+        answerFile.setFileName(":/hydrajsons/api.doc.json");
         answerFile.open(QFile::ReadOnly | QFile::Text);
         response.write(answerFile.readAll(),true);
+        answerFile.close();
     }
     else if (requestPath=="/") {
-        QFile answerFile(":/hydrajsons/index.html");
+        answerFile.setFileName(":/hydrajsons/index.html");
         answerFile.open(QFile::ReadOnly | QFile::Text);
         response.write(answerFile.readAll(),true);
+        answerFile.close();
     }
     else {
         response.write("게이트웨이 왕!",true);
