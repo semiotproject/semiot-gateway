@@ -39,19 +39,19 @@ Q_SIGNALS:
 private Q_SLOTS:
     void _onNewConnection();
     void _socketDisconnected();
-    QString getValueByResourcePath(QString resourcePath);
 
 private:
     QStringList _wellKnownCore;
     QWebSocketServer *_pWebSocketServer;
     QList<QWebSocket *> _clients; // TODO: QMultiHash
-    QHash<QString,QString> _currentResourcesValues; // NOTE: could require a lot of memory?
+    QHash<QString,QString> _currentResourcesValues; // TODO: move to separated class
     bool _debug;
 
 signals:
 
 public slots:
     void processNewData(QString resourcePath, QString value);
+    QString getValueByResourcePath(QString resourcePath);
 };
 
 #endif // WEBSOCKETSERVER_H

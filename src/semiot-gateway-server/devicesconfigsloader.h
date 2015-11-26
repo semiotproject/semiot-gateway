@@ -19,11 +19,15 @@ signals:
 
 public slots:
     void addConfig(QUrl configUrl); // NOTE: return config id?
+    void continueLoading();
 
 private:
     QQmlEngine* _engine;
     // TODO: modular system
     UDPDriver * _udpDriver; // TODO: drivers list
+    // FIXME: save objects list:
+    QObject * object;
+    QQmlComponent* component;
 };
 
 #endif // DEVICESCONFIGSLOADER_H

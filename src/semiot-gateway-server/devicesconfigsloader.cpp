@@ -12,16 +12,31 @@ DevicesConfigsLoader::DevicesConfigsLoader(bool debug, QObject *parent) : QObjec
 void DevicesConfigsLoader::addConfig(QUrl configUrl)
 {
     // FIXME: forgotten pointers
-    QQmlComponent* component = new QQmlComponent(_engine,configUrl);
-    QObject *object = component->create();
-    // TODO: driversList:
-    if (object->property("driverName")==_udpDriver->getDriverName()) {
-        QObject::connect(_udpDriver,SIGNAL(newDataReady(QVariant)),object,SIGNAL(newDataPacketReceived(QVariant)));
-        QObject::connect(object,SIGNAL(newDataReady(QString,QString)),this,SIGNAL(newDataReady(QString,QString)));
-        QObject::connect(object,SIGNAL(addDriverDataSource(QVariant)),_udpDriver,SLOT(addDriverDataSource(QVariant)));
-        DeviceConfig* device_object = dynamic_cast<DeviceConfig*>(object);
-        if (true) {// TODO: if connect success
-            emit device_object->driverConnected();
+    component = new QQmlComponent(_engine,configUrl);
+    if (component->isLoading()) {
+        QObject::connect(component, SIGNAL(statusChanged(QQmlComponent::Status)), this, SLOT(continueLoading()));
+    }
+    else {
+        continueLoading();
+    }
+
+}
+
+void DevicesConfigsLoader::continueLoading()
+{
+    if (component->isError()) {
+        qWarning() << component->errors();
+    } else {
+        object = component->create();
+        // TODO: driversList:
+        if (object->property("driverName")==_udpDriver->getDriverName()) {
+            QObject::connect(_udpDriver,SIGNAL(newDataReady(QVariant)),object,SIGNAL(newDataPacketReceived(QVariant)));
+            QObject::connect(object,SIGNAL(newDataReady(QString,QString)),this,SIGNAL(newDataReady(QString,QString)));
+            QObject::connect(object,SIGNAL(addDriverDataSource(QVariant)),_udpDriver,SLOT(addDriverDataSource(QVariant)));
+            DeviceConfig* device_object = dynamic_cast<DeviceConfig*>(object);
+            if (true) {// TODO: if connect success
+                emit device_object->driverConnected();
+            }
         }
     }
 }

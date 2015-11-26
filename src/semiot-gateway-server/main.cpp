@@ -36,8 +36,8 @@ int main(int argc, char *argv[])
     DevicesConfigsLoader devicesConfigsLoader;
 
     QObject::connect(&devicesConfigsLoader,SIGNAL(newDataReady(QString,QString)),server,SLOT(processNewData(QString,QString)));
-    // FIXME:
-    devicesConfigsLoader.addConfig(QUrl::fromLocalFile("/home/a_andreyev/code/semiot/semiot-gateway/src/config.qml"));
+    // TODO: load from interface
+    devicesConfigsLoader.addConfig(QUrl("https://raw.githubusercontent.com/semiotproject/semiot-gateway/master/src/config.qml"));
     HttpServer httpServer(&a);
     return a.exec();
 }
