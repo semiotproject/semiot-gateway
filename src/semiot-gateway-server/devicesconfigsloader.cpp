@@ -11,7 +11,7 @@ DevicesConfigsLoader::DevicesConfigsLoader(bool debug, QObject *parent) : QObjec
 
 void DevicesConfigsLoader::addConfig(QUrl configUrl)
 {
-    // FIXME: forgetten pointers
+    // FIXME: forgotten pointers
     QQmlComponent* component = new QQmlComponent(_engine,configUrl);
     QObject *object = component->create();
     // TODO: driversList:

@@ -3,7 +3,7 @@ QT += core websockets network qml
 QT -= gui
 
 TARGET = semiot-gateway-server
-CONFIG += console
+CONFIG += console network
 CONFIG -= app_bundle
 
 TEMPLATE = app
@@ -12,12 +12,24 @@ SOURCES += main.cpp \
     websocketserver.cpp \
     udpdriver.cpp \
     devicesconfigsloader.cpp \
-    deviceconfig.cpp
+    deviceconfig.cpp \
+    httpserver.cpp \
+    httprequestcontroller.cpp
 
 HEADERS += \
     websocketserver.h \
     udpdriver.h \
     devicesconfigsloader.h \
-    deviceconfig.h
+    deviceconfig.h \
+    httpserver.h \
+    httprequestcontroller.h
 
-RESOURCES +=
+RESOURCES += \
+    res.qrc
+
+# http://stefanfrings.de/qtwebapp/index-en.html:
+include(./3rdparty/QtWebApp/httpserver/httpserver.pri) #TODO: shared lib
+
+DISTFILES += \
+    api.doc.json \
+    api.json

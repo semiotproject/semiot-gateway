@@ -1,0 +1,9 @@
+{
+  "@context": {
+    "hydra": "http://www.w3.org/ns/hydra/core#",
+    "vocab": "http://semiot.gateway/api/vocab#"
+  },
+  "@id": "http://semiot.gateway/api",
+  "@type": "vocab:EntryPoint",
+  "vocab:EntryPoint/systems": "http://semiot.gateway/api/systems/list"
+}

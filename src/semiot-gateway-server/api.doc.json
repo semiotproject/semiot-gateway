@@ -1,0 +1,9 @@
+{
+  "@context": {
+    "hydra": "http://www.w3.org/ns/hydra/core#",
+    "vocab": "http://semiot.gateway/api/vocab#"
+  },
+  "@id": "http://semiot.gateway/api/doc",
+  "@type": "hydra:ApiDocumentation",
+  "hydra:entrypoint": "http://semiot.gateway/api/"
+}

@@ -6,6 +6,7 @@
 #include <QDebug>
 #include "websocketserver.h"
 #include "devicesconfigsloader.h"
+#include "httpserver.h"
 
 int main(int argc, char *argv[])
 {
@@ -37,6 +38,7 @@ int main(int argc, char *argv[])
     QObject::connect(&devicesConfigsLoader,SIGNAL(newDataReady(QString,QString)),server,SLOT(processNewData(QString,QString)));
     // FIXME:
     devicesConfigsLoader.addConfig(QUrl::fromLocalFile("/home/a_andreyev/code/semiot/semiot-gateway/src/config.qml"));
+    HttpServer httpServer(&a);
     return a.exec();
 }
 

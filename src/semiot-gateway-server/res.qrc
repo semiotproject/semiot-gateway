@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/hydrajsons">
+        <file>api.doc.json</file>
+        <file>api.json</file>
+        <file>index.html</file>
+    </qresource>
+</RCC>
