@@ -33,7 +33,8 @@ void HttpRequestController::service(HttpRequest &request, HttpResponse &response
         //answerFile.setFileName(":/hydrajsons/api.systems.json");
         //answerFile.open(QFile::ReadOnly | QFile::Text);
         //response.write(answerFile.readAll(),true);
-        response.write(_dataServer->getValueByResourcePath(WELLKNOWNCOREPATH).toUtf8(),true);
+        QStringList systemsList = _dataServer->getSystemsList();
+        response.write(systemsList.join(";\n").toUtf8(),true);
     }
     else {
         response.setHeader("Content-Type", "text/plain; charset=UTF-8");

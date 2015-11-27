@@ -11,6 +11,8 @@ class DataServer
 public:
     DataServer();
     //TODO: json
+    QStringList getResourcesList();
+    QStringList getSystemsList();
     QString getValueByResourcePath(QString resourcePath);
     QHash<QString,QString> _currentResourcesValues; // FIXME: to private
 private:
