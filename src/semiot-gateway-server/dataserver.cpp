@@ -8,6 +8,9 @@ DataServer::DataServer()
 
 QStringList DataServer::getResourcesList(QString system)
 {
+    if (system.startsWith("/")) {
+        system.remove(0,1); // fixme
+    }
     QStringList allResources(_currentResourcesValues.keys());
     if (system=="") {
         return allResources;
@@ -31,7 +34,7 @@ QStringList DataServer::getSystemsList()
     QStringList resourcesList = getResourcesList();
     resourcesList.removeAll(WELLKNOWNCOREPATH);
     foreach (QString resource, resourcesList) {
-        QString system = resource.split("/").at(1);
+        QString system = resource.split("/").first();
         if (!systemsList.contains(system)) {
             systemsList.append(system);
         }
@@ -41,5 +44,8 @@ QStringList DataServer::getSystemsList()
 
 QString DataServer::getValueByResourcePath(QString resourcePath)
 {
+    if (resourcePath.startsWith("/")) {
+        resourcePath.remove(0,1); // fixme
+    }
     return _currentResourcesValues[resourcePath];
 }
