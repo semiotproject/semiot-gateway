@@ -30,9 +30,10 @@ void HttpRequestController::service(HttpRequest &request, HttpResponse &response
     }
     else if (requestPath=="/systems") {
         response.setHeader("Content-Type", "application/json; charset=UTF-8");
-        answerFile.setFileName(":/hydrajsons/index.html");
-        answerFile.open(QFile::ReadOnly | QFile::Text);
-        response.write(answerFile.readAll(),true);
+        //answerFile.setFileName(":/hydrajsons/api.systems.json");
+        //answerFile.open(QFile::ReadOnly | QFile::Text);
+        //response.write(answerFile.readAll(),true);
+        response.write(_dataServer->getValueByResourcePath(WELLKNOWNCOREPATH).toUtf8(),true);
     }
     else {
         response.setHeader("Content-Type", "text/plain; charset=UTF-8");

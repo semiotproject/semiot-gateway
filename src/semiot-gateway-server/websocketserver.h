@@ -26,8 +26,6 @@
 QT_FORWARD_DECLARE_CLASS(QWebSocketServer)
 QT_FORWARD_DECLARE_CLASS(QWebSocket)
 
-#define WELLKNOWNCOREPATH "/.well-known/core"
-
 class WebSocketServer : public QObject
 {
     Q_OBJECT
