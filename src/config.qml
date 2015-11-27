@@ -16,10 +16,7 @@ SemIoTDeviceConfig {
         var mac = macFromData(dataPacket.data)
         var temperature = floatFromData(dataPacket.data,6+1+4)
         var humidity = floatFromData(dataPacket.data,6+1)
-        // TODO: deviceNameHashGenerator
-        deviceName = "dht11-"+mac+"-"+dataPacket.senderHost+"-"+dataPacket.senderPort
-        //
-        deviceName = hashName("dht11",mac,dataPacket.senderHost,dataPacket.senderPort)
+        deviceName = hashName("dht11-"+mac+"-"+driverName+"-"+dataPacket.senderHost+"-"+dataPacket.senderPort)
 
         var descriptionMap = {
            '\\${MAC}':mac
@@ -93,9 +90,8 @@ SemIoTDeviceConfig {
         });
     }
 
-    function hashName(modelName,macAddr,host,port) {
-        var str = modelName+macAddr+host+port
-        var hash = 5381,
+    function hashName(str) {
+        var hash = 5381, // NOTE: why 5381
             i = str.length
         while(i)
           hash = (hash * 33) ^ str.charCodeAt(--i)
