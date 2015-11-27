@@ -21,6 +21,7 @@
 #include <QtCore/QByteArray>
 #include <QMultiHash>
 #include <QVariant>
+#include "dataserver.h"
 
 QT_FORWARD_DECLARE_CLASS(QWebSocketServer)
 QT_FORWARD_DECLARE_CLASS(QWebSocket)
@@ -31,7 +32,7 @@ class WebSocketServer : public QObject
 {
     Q_OBJECT
 public:
-    explicit WebSocketServer(quint16 port, bool debug = false, QObject *parent = Q_NULLPTR);
+    explicit WebSocketServer(DataServer* dataServer, quint16 port, bool debug = false, QObject *parent = Q_NULLPTR);
     ~WebSocketServer();
 Q_SIGNALS:
     void closed();
@@ -44,14 +45,13 @@ private:
     QStringList _wellKnownCore;
     QWebSocketServer *_pWebSocketServer;
     QList<QWebSocket *> _clients; // TODO: QMultiHash
-    QHash<QString,QString> _currentResourcesValues; // TODO: move to separated class
     bool _debug;
+    DataServer* _dataServer;
 
 signals:
 
 public slots:
     void processNewData(QString resourcePath, QString value);
-    QString getValueByResourcePath(QString resourcePath);
 };
 
 #endif // WEBSOCKETSERVER_H

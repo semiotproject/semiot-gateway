@@ -1,7 +1,7 @@
 #include "httpserver.h"
 #include <QSettings>
 
-HttpServer::HttpServer(QObject *parent) : QObject(parent)
+HttpServer::HttpServer(DataServer *dataServer, QObject *parent) : QObject(parent), _dataServer(dataServer)
 {
     _settings = new QSettings();
     _settings->beginGroup("listener");
@@ -14,6 +14,6 @@ HttpServer::HttpServer(QObject *parent) : QObject(parent)
     _settings->setValue("maxRequestSize", 16000);
     _settings->setValue("maxMultiPartSize", 10000000);
     //_settings->endGroup();
-    _listener = new HttpListener(_settings, new HttpRequestController(this), this);
+    _listener = new HttpListener(_settings, new HttpRequestController(_dataServer,this), this);
 }
 

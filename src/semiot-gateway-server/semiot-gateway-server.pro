@@ -14,7 +14,8 @@ SOURCES += main.cpp \
     devicesconfigsloader.cpp \
     deviceconfig.cpp \
     httpserver.cpp \
-    httprequestcontroller.cpp
+    httprequestcontroller.cpp \
+    dataserver.cpp
 
 HEADERS += \
     websocketserver.h \
@@ -22,7 +23,8 @@ HEADERS += \
     devicesconfigsloader.h \
     deviceconfig.h \
     httpserver.h \
-    httprequestcontroller.h
+    httprequestcontroller.h \
+    dataserver.h
 
 RESOURCES += \
     res.qrc

@@ -1,15 +1,18 @@
 #ifndef HTTPREQUESTCONTROLLER_H
 #define HTTPREQUESTCONTROLLER_H
 
-#include <QObject>
+//#include <QObject>
 #include "httprequesthandler.h"
+#include "dataserver.h"
 
 class HttpRequestController : public HttpRequestHandler
 {
-    Q_OBJECT
+    //Q_OBJECT
 public:
-    HttpRequestController(QObject *parent = 0);
+    HttpRequestController(DataServer* dataServer, QObject *parent = 0);
     void service(HttpRequest& request, HttpResponse& response);
+private:
+    DataServer* _dataServer;
 };
 
 #endif // HTTPREQUESTCONTROLLER_H

@@ -30,7 +30,9 @@ int main(int argc, char *argv[])
     bool debug = parser.isSet(dbgOption);
     int port = parser.value(portOption).toInt();
 
-    WebSocketServer *server = new WebSocketServer(port, debug);
+    DataServer dataServer;
+
+    WebSocketServer *server = new WebSocketServer(&dataServer,port, debug);
     QObject::connect(server, &WebSocketServer::closed, &a, &QCoreApplication::quit);
 
     DevicesConfigsLoader devicesConfigsLoader;
@@ -38,7 +40,7 @@ int main(int argc, char *argv[])
     QObject::connect(&devicesConfigsLoader,SIGNAL(newDataReady(QString,QString)),server,SLOT(processNewData(QString,QString)));
     // TODO: load from interface
     devicesConfigsLoader.addConfig(QUrl("https://raw.githubusercontent.com/semiotproject/semiot-gateway/master/src/config.qml"));
-    HttpServer httpServer(&a);
+    HttpServer httpServer(&dataServer,&a); // FIXME: poor architechture
     return a.exec();
 }
 

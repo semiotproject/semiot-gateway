@@ -4,11 +4,12 @@
 
 QT_USE_NAMESPACE
 
-WebSocketServer::WebSocketServer(quint16 port, bool debug, QObject *parent) :
+WebSocketServer::WebSocketServer(DataServer *dataServer, quint16 port, bool debug, QObject *parent) :
     QObject(parent),
     _pWebSocketServer(new QWebSocketServer(QStringLiteral("SemIoT Gateway"),QWebSocketServer::NonSecureMode, this)),
     _clients(),
-    _debug(debug)
+    _debug(debug),
+    _dataServer(dataServer)
 {
     if (_pWebSocketServer->listen(QHostAddress::Any, port)) {
         if (_debug)
@@ -35,7 +36,7 @@ void WebSocketServer::_onNewConnection()
     if (_debug) {
         //qDebug() << pSocket->requestUrl().path();
     }
-    pSocket->sendTextMessage(getValueByResourcePath(pSocket->requestUrl().path()));
+    pSocket->sendTextMessage(_dataServer->getValueByResourcePath(pSocket->requestUrl().path()));
 }
 
 void WebSocketServer::_socketDisconnected()
@@ -49,27 +50,17 @@ void WebSocketServer::_socketDisconnected()
     }
 }
 
-QString WebSocketServer::getValueByResourcePath(QString resourcePath)
-{
-    if (_debug) {
-        //qDebug() << "getValueByResourcePath:"<<resourcePath
-        //         <<": "<<_currentResourcesValues.value(resourcePath);
-        // qDebug() << _wellKnownCore.join(';');
-    }
-    return _currentResourcesValues[resourcePath];
-}
-
 void WebSocketServer::processNewData(QString resourcePath, QString value)
 {
     if (_debug) {
         //qDebug() << "processNewData resourcePath:" << resourcePath;
         //qDebug() << "processNewData value:" << value;
     }
-    if (_currentResourcesValues.contains(resourcePath)) {
-        _currentResourcesValues[resourcePath]=value;
+    if (_dataServer->_currentResourcesValues.contains(resourcePath)) {
+        _dataServer->_currentResourcesValues[resourcePath]=value;
     }
     else {
-        _currentResourcesValues.insert(resourcePath,value);
+        _dataServer->_currentResourcesValues.insert(resourcePath,value);
     }
 
     foreach (QWebSocket* socket, _clients) {
