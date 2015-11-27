@@ -26,7 +26,7 @@ void HttpRequestController::service(HttpRequest &request, HttpResponse &response
         answerFile.open(QFile::ReadOnly | QFile::Text);
         response.write(answerFile.readAll(),true);
     }
-    else if (requestPath=="") {
+    else if (requestPath=="/") {
         response.setHeader("Content-Type", "text/html; charset=UTF-8");
         answerFile.setFileName(":/hydrajsons/index.html");
         answerFile.open(QFile::ReadOnly | QFile::Text);
