@@ -6,9 +6,23 @@ DataServer::DataServer()
 
 }
 
-QStringList DataServer::getResourcesList()
+QStringList DataServer::getResourcesList(QString system)
 {
-    return _currentResourcesValues.keys();
+    QStringList allResources(_currentResourcesValues.keys());
+    if (system=="") {
+        return allResources;
+    }
+    else {
+        QStringList resourcesList;
+        QString resource;
+        for (int i=0;i<allResources.size();i++) {
+            resource = allResources.at(i);
+            if (resource.startsWith(system+"/")) {
+                resourcesList.append(resource);
+            }
+        }
+        return resourcesList;
+    }
 }
 
 QStringList DataServer::getSystemsList()
