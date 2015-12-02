@@ -35,8 +35,8 @@ SemIoTDeviceConfig {
         temperatureDesc = replaceAll(temperatureDescSrc, temperatureMap)
 
         // NOTE: is that ok that we decide here how to organize ws pathes?
-        newDataReady(deviceName+"/description",descriptionDesc)
-        newDataReady(deviceName+"/temperature",temperatureDesc)
+        newDataReady("/"+deviceName+"/description",descriptionDesc)
+        newDataReady("/"+deviceName+"/temperature",temperatureDesc)
     }
 
     property string deviceName
