@@ -2,7 +2,7 @@
 #include <QDebug>
 #include <QFile>
 
-HttpRequestController::HttpRequestController(DataServer *dataServer, QObject *parent) : HttpRequestHandler(parent), _dataServer(dataServer)
+HttpRequestController::HttpRequestController(DataServer &ds, QObject *parent) : HttpRequestHandler(parent), _dataServer(ds)
 {
 }
 
@@ -26,6 +26,16 @@ void HttpRequestController::service(HttpRequest &request, HttpResponse &response
         answerFile.open(QFile::ReadOnly | QFile::Text);
         response.write(answerFile.readAll(),true);
     }
+    else if (requestPath=="/api/register_device_driver") {
+        QString dd_type =request.getParameter("type").constData();
+        QString dd_data=request.getParameter("data").constData();
+        if (dd_type=="url") {
+            emit this->addDeviceDriverFromUrl(QUrl(dd_data));
+        }
+        else if (dd_type=="plaintext") {
+            emit this->addDeviceDriverFromString(dd_data);
+        }
+    }
     else if (requestPath=="") {
         response.setHeader("Content-Type", "text/html; charset=UTF-8");
         answerFile.setFileName(":/hydrajsons/index.html");
@@ -37,17 +47,19 @@ void HttpRequestController::service(HttpRequest &request, HttpResponse &response
         requestPathTail.remove(0,QString("/api/systems").length());
         if (requestPathTail=="") {
             response.setHeader("Content-Type", "application/json; charset=UTF-8");
-            QStringList systemsList = _dataServer->getSystemsList();
-            response.write(systemsList.join(";\n").toUtf8(),true);
+            // FIXME: json string
+            QString systemsList = _dataServer.getSystemsList();
+            response.write(systemsList.toUtf8(),true);
         }
         else if (requestPathTail.count("/")==1) {
             response.setHeader("Content-Type", "application/json; charset=UTF-8");
-            QStringList systemsList = _dataServer->getResourcesList(requestPathTail);
-            response.write(systemsList.join(";\n").toUtf8(),true);
+            // FIXME: json string
+            QString systemsList = _dataServer.getResourcesList(requestPathTail);
+            response.write(systemsList.toUtf8(),true);
         }
         else if (requestPathTail.count("/")==2) {
             response.setHeader("Content-Type", "application/json; charset=UTF-8");
-            QString resourceValue = _dataServer->getValueByResourcePath(requestPathTail);
+            QString resourceValue = _dataServer.getValueByResourcePath(requestPathTail);
             response.write(resourceValue.toUtf8(),true);
         }
 

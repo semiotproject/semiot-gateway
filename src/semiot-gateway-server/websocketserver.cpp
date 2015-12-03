@@ -4,7 +4,7 @@
 
 QT_USE_NAMESPACE
 
-WebSocketServer::WebSocketServer(DataServer *dataServer, quint16 port, bool debug, QObject *parent) :
+WebSocketServer::WebSocketServer(DataServer &dataServer, quint16 port, bool debug, QObject *parent) :
     QObject(parent),
     _pWebSocketServer(new QWebSocketServer(QStringLiteral("SemIoT Gateway"),QWebSocketServer::NonSecureMode, this)),
     _clients(),
@@ -36,7 +36,9 @@ void WebSocketServer::_onNewConnection()
     if (_debug) {
         //qDebug() << pSocket->requestUrl().path();
     }
-    pSocket->sendTextMessage(_dataServer->getValueByResourcePath(pSocket->requestUrl().path()));
+    QString path = pSocket->requestUrl().path();
+    QString value = _dataServer.getValueByResourcePath(path);
+    pSocket->sendTextMessage(value);
 }
 
 void WebSocketServer::_socketDisconnected()
@@ -52,16 +54,7 @@ void WebSocketServer::_socketDisconnected()
 
 void WebSocketServer::processNewData(QString resourcePath, QString value)
 {
-    if (_debug) {
-        //qDebug() << "processNewData resourcePath:" << resourcePath;
-        //qDebug() << "processNewData value:" << value;
-    }
-    if (_dataServer->_currentResourcesValues.contains(resourcePath)) {
-        _dataServer->_currentResourcesValues[resourcePath]=value;
-    }
-    else {
-        _dataServer->_currentResourcesValues.insert(resourcePath,value);
-    }
+    _dataServer.processNewData(resourcePath,value);
 
     foreach (QWebSocket* socket, _clients) {
         QString socketRequestUrlPath = socket->requestUrl().path();

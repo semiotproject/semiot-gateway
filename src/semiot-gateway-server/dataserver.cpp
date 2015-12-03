@@ -6,14 +6,11 @@ DataServer::DataServer()
 
 }
 
-QStringList DataServer::getResourcesList(QString system)
+QString DataServer::getResourcesList(QString system) const
 {
-    if (system.startsWith("/")) {
-        system.remove(0,1); // fixme
-    }
     QStringList allResources(_currentResourcesValues.keys());
     if (system=="") {
-        return allResources;
+        return allResources.join(";\n"); //TODO: json
     }
     else {
         QStringList resourcesList;
@@ -24,14 +21,14 @@ QStringList DataServer::getResourcesList(QString system)
                 resourcesList.append(resource);
             }
         }
-        return resourcesList;
+        return resourcesList.join(";\n"); //TODO: json
     }
 }
 
-QStringList DataServer::getSystemsList()
+QString DataServer::getSystemsList() const
 {
     QStringList systemsList;
-    QStringList resourcesList = getResourcesList();
+    QStringList resourcesList = getResourcesList().split(";"); //fixme: json
     resourcesList.removeAll(WELLKNOWNCOREPATH);
     foreach (QString resource, resourcesList) {
         QString system = resource.split("/").first();
@@ -39,13 +36,15 @@ QStringList DataServer::getSystemsList()
             systemsList.append(system);
         }
     }
-    return systemsList;
+    return systemsList.join(";\n"); //TODO: json
 }
 
-QString DataServer::getValueByResourcePath(QString resourcePath)
+QString DataServer::getValueByResourcePath(QString resourcePath) const
 {
-    if (resourcePath.startsWith("/")) {
-        resourcePath.remove(0,1); // fixme
-    }
     return _currentResourcesValues[resourcePath];
+}
+
+void DataServer::processNewData(QString resourcePath, QString value)
+{
+    _currentResourcesValues.insert(resourcePath,value);
 }

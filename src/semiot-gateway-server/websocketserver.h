@@ -30,7 +30,7 @@ class WebSocketServer : public QObject
 {
     Q_OBJECT
 public:
-    explicit WebSocketServer(DataServer* dataServer, quint16 port, bool debug = false, QObject *parent = Q_NULLPTR);
+    explicit WebSocketServer(DataServer& dataServer, quint16 port, bool debug = false, QObject *parent = Q_NULLPTR);
     ~WebSocketServer();
 Q_SIGNALS:
     void closed();
@@ -44,7 +44,7 @@ private:
     QWebSocketServer *_pWebSocketServer;
     QList<QWebSocket *> _clients; // TODO: QMultiHash
     bool _debug;
-    DataServer* _dataServer;
+    DataServer& _dataServer;
 
 signals:
 

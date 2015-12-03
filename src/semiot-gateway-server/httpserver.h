@@ -11,16 +11,19 @@ class HttpServer : public QObject
 {
     Q_OBJECT
 public:
-    explicit HttpServer(DataServer* dataServer, QObject *parent = 0);
+    explicit HttpServer(DataServer& dataServer, QObject *parent = 0);
 
 signals:
+    void addDeviceDriverFromUrl(QUrl url);
+    void addDeviceDriverFromString(QString string);
 
 public slots:
 
 private:
     HttpListener* _listener;
     QSettings* _settings;
-    DataServer* _dataServer;
+    DataServer& _dataServer;
+    HttpRequestController* _requestController;
 };
 
 #endif // HTTPSERVER_H

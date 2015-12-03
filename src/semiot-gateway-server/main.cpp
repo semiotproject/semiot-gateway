@@ -32,15 +32,18 @@ int main(int argc, char *argv[])
 
     DataServer dataServer;
 
-    WebSocketServer *server = new WebSocketServer(&dataServer,port, debug);
+    WebSocketServer *server = new WebSocketServer(dataServer,port,debug);
     QObject::connect(server, &WebSocketServer::closed, &a, &QCoreApplication::quit);
 
     DevicesConfigsLoader devicesConfigsLoader;
 
+    HttpServer httpServer(dataServer,&a); // FIXME: poor architechture
+
     QObject::connect(&devicesConfigsLoader,SIGNAL(newDataReady(QString,QString)),server,SLOT(processNewData(QString,QString)));
+    QObject::connect(&httpServer,SIGNAL(addDeviceDriverFromUrl(QUrl)),&devicesConfigsLoader,SLOT(addConfig(QUrl)));
     // TODO: load from interface
-    devicesConfigsLoader.addConfig(QUrl("https://raw.githubusercontent.com/semiotproject/semiot-gateway/master/src/config.qml"));
-    HttpServer httpServer(&dataServer,&a); // FIXME: poor architechture
+    //devicesConfigsLoader.addConfig(QUrl("https://raw.githubusercontent.com/semiotproject/semiot-gateway/master/src/config.qml"));
+
     return a.exec();
 }
 
