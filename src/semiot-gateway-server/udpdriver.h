@@ -5,6 +5,10 @@
 #include <QUdpSocket>
 #include <QDateTime>
 
+#define UDP_GTW_OK "GTWOK"
+#define UDP_GTW_OK_SIZE 5
+#define UDP_GTW_PING "GTW"
+
 class UDPDriver : public QObject
 {
     Q_OBJECT

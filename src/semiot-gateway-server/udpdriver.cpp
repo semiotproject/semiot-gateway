@@ -3,6 +3,7 @@
 #include <QVariantMap>
 #include <QJsonArray>
 #include <QJSValue>
+#include <QByteArray>
 
 UDPDriver::UDPDriver(bool debug, QObject *parent) : QObject(parent),
   _debug(debug)
@@ -43,13 +44,17 @@ void UDPDriver::readPendingDatagrams()
             quint16 senderPort;
 
             udpSocket->readDatagram(datagram->data(), datagram->size(),senderHost, &senderPort);
-            if (_debug) {
-                // qDebug()<<"datagram: "<<*datagram;
-                // qDebug()<<"port: "<<senderPort;
-                // qDebug()<<"address: "<<senderHost;
-            }
+            qDebug()<<"datagram: "<<*datagram;
+            qDebug()<<"port: "<<senderPort;
+            qDebug()<<"address: "<<senderHost;
 
-            processTheDatagram(datagram,senderPort,senderHost);
+            if (QString::fromLatin1(datagram->data())==QString(UDP_GTW_PING)) {
+                qDebug()<<"answering ping";
+                udpSocket->writeDatagram(QByteArray(UDP_GTW_OK,UDP_GTW_OK_SIZE), *senderHost, senderPort);
+            }
+            else {
+                processTheDatagram(datagram,senderPort,senderHost);
+            }
         }
     }
 }
