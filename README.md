@@ -1,6 +1,6 @@
 # SemIoT Gateway
 
-[!semiot_gateway_structure]()
+![semiot_gateway_structure](https://github.com/semiotproject/semiot-gateway/raw/master/doc/semiot_gateway_structure.png)
 
 This application allows you to share your local sensors observations in local or world-wide network. Observations could be annotated with semantic desctiptions to provide unified agile access for possible further complicated analysis and logical reasoning with another applications (like SemIoT Platform).
 
