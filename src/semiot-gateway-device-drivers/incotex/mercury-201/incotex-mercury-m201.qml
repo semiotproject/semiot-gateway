@@ -7,42 +7,46 @@ import ru.semiot.gateway 0.1
 SemIoTDeviceConfig {
     // NOTE: is that ok that system driver is only one per device driver?
     driverName: "udp";
+    property int listenPort: 55555
     onDriverConnected: {
-        addDriverDataSource({"port":55555})
+        addDriverDataSource({"port":listenPort})
     }
     onNewDataPacketReceived: {
         // FORMAT:
         // "M201" (4B)
         // imp_counter (2B)
-        // KWh_counter (4B)
+        // high_counter (4B)
         // newline (1B)
         // == 10 BYTES
         // TODO: checksum?
         // TODO: mac or some id
-        var tick = tickFromData(dataPacket.data)
-        var kWhtick = kWhTickFromData(dataPacket.data)
-        var realTick = tick+kWhtick*3200
-        var tick2Wh = tickCounter2Wh(realTick)
-        deviceName = hashName("mercury-201-"+"-"+driverName+"-"+dataPacket.senderHost+"-"+dataPacket.senderPort)
+        if (dataPacket.senderPort==listenPort) {
+            // TODO: DEVICE_WORD check
+            var tick = tickFromData(dataPacket.data)
+            var kWhtick = kWhTickFromData(dataPacket.data)
+            var realTick = tick+kWhtick*3200
+            var tick2Wh = tickCounter2Wh(realTick)
+            deviceName = hashName("mercury-201-"+"-"+driverName+"-"+dataPacket.senderHost+"-"+dataPacket.senderPort)
 
-        var descriptionMap = {
-            '\\${HOST}':dataPacket.senderHost,
-            '\\${PORT}':dataPacket.senderPort
-        };
+            var descriptionMap = {
+                '\\${HOST}':dataPacket.senderHost,
+                '\\${PORT}':dataPacket.senderPort
+            };
 
-        var electricEnergyConsumptionMap = {
-            '\\${TIMESTAMP}':dataPacket.timeStamp,
-            '\\${DATETIME}':dataPacket.dateTime,
-            '\\${Tick}':realTick,
-            '\\${Tick2Wh}':tick2Wh
-        };
+            var electricEnergyConsumptionMap = {
+                '\\${TIMESTAMP}':dataPacket.timeStamp,
+                '\\${DATETIME}':dataPacket.dateTime,
+                '\\${Tick}':realTick,
+                '\\${Tick2Wh}':tick2Wh
+            };
 
-        descriptionDesc = replaceAll(descriptionDescSrc, descriptionMap)
-        electricEnergyConsumptionDesc = replaceAll(electricEnergyConsumptionDescSrc, electricEnergyConsumptionMap)
+            descriptionDesc = replaceAll(descriptionDescSrc, descriptionMap)
+            electricEnergyConsumptionDesc = replaceAll(electricEnergyConsumptionDescSrc, electricEnergyConsumptionMap)
 
-        // NOTE: is that ok that we decide here how to organize res pathes?
-        newDataReady("/"+deviceName+"/description",descriptionDesc)
-        newDataReady("/"+deviceName+"/electricEnergyConsumption",electricEnergyConsumptionDesc)
+            // NOTE: is that ok that we decide here how to organize res pathes?
+            newDataReady("/"+deviceName+"/description",descriptionDesc)
+            newDataReady("/"+deviceName+"/electricEnergyConsumption",electricEnergyConsumptionDesc)
+        }
     }
 
     property string deviceName

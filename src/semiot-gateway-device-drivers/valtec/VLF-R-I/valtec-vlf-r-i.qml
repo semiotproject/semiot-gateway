@@ -4,42 +4,45 @@ import ru.semiot.gateway 0.1
 SemIoTDeviceConfig {
     // NOTE: is that ok that system driver is only one per device driver?
     driverName: "udp";
+    property int listenPort: 33333
     onDriverConnected: {
-        addDriverDataSource({"port":33333})
+        addDriverDataSource({"port":listenPort})
     }
     onNewDataPacketReceived: {
         // FORMAT:
-        // "M201" (4B)
+        // "VLFR" (4B)
         // imp_counter (2B)
-        // KWh_counter (4B)
-        // newline (1B)
-        // == 10 BYTES
+        // high_counter (4B)
+        // MAC (6B)
+        // == 16 BYTES
         // TODO: checksum?
-        // TODO: mac or some id
-        var tick = tickFromData(dataPacket.data)
-        var kWhtick = kWhTickFromData(dataPacket.data)
-        var realTick = tick+kWhtick*3200
-        var tick2Wh = tickCounter2Wh(realTick)
-        deviceName = hashName("mercury-201-"+"-"+driverName+"-"+dataPacket.senderHost+"-"+dataPacket.senderPort)
+        if (dataPacket.senderPort==listenPort) {
+            //TODO: DEVICE_WORD check
+            var tick = tickFromData(dataPacket.data)
+            var highTick = highTickFromData(dataPacket.data)
+            var realTick = tick+highTick*10
+            var tick2Litre = tickCounter2Litre(realTick)
+            deviceName = hashName("valtec-vlf-r-i"+"-"+driverName+"-"+dataPacket.senderHost+"-"+dataPacket.senderPort)
 
-        var descriptionMap = {
-            '\\${HOST}':dataPacket.senderHost,
-            '\\${PORT}':dataPacket.senderPort
-        };
+            var descriptionMap = {
+                '\\${HOST}':dataPacket.senderHost,
+                '\\${PORT}':dataPacket.senderPort
+            };
 
-        var electricEnergyConsumptionMap = {
-            '\\${TIMESTAMP}':dataPacket.timeStamp,
-            '\\${DATETIME}':dataPacket.dateTime,
-            '\\${Tick}':realTick,
-            '\\${Tick2Wh}':tick2Wh
-        };
+            var electricEnergyConsumptionMap = {
+                '\\${TIMESTAMP}':dataPacket.timeStamp,
+                '\\${DATETIME}':dataPacket.dateTime,
+                '\\${Tick}':realTick,
+                '\\${tick2Litre}':tick2Litre
+            };
 
-        descriptionDesc = replaceAll(descriptionDescSrc, descriptionMap)
-        electricEnergyConsumptionDesc = replaceAll(electricEnergyConsumptionDescSrc, electricEnergyConsumptionMap)
+            descriptionDesc = replaceAll(descriptionDescSrc, descriptionMap)
+            electricEnergyConsumptionDesc = replaceAll(electricEnergyConsumptionDescSrc, electricEnergyConsumptionMap)
 
-        // NOTE: is that ok that we decide here how to organize res pathes?
-        newDataReady("/"+deviceName+"/description",descriptionDesc)
-        newDataReady("/"+deviceName+"/waterConsumption",electricEnergyConsumptionDesc)
+            // NOTE: is that ok that we decide here how to organize res pathes?
+            newDataReady("/"+deviceName+"/description",descriptionDesc)
+            newDataReady("/"+deviceName+"/waterConsumption",electricEnergyConsumptionDesc)
+        }
     }
 
     property string deviceName
@@ -55,10 +58,10 @@ SemIoTDeviceConfig {
     ';
     property string electricEnergyConsumptionDescSrc : '
         This is ESP8266-Arduino based SemIoT device prototype for the
-        WATER consumption counter.
+        WATER consumption counter Valtec VLR-F-I.
         TODO: super ontology description.
         Tick value: ${Tick}.
-        Watt-hour value: ${Tick2Wh} W*h.
+        Litre value: ${tick2Litre}.
         Timestamp: ${TIMESTAMP}.
         Datetime: ${DATETIME}.
     ';
@@ -84,10 +87,10 @@ SemIoTDeviceConfig {
         console.log("M201 data=",(dataPacketData[0]),dataPacketData[1],dataPacketData[2],dataPacketData[3],dataPacketData[4],dataPacketData[5],dataPacketData[6],dataPacketData[7],dataPacketData[8],dataPacketData[9],dataPacketData[10])
         return (dataPacketData[4]<<8)+dataPacketData[5]
     }
-    function kWhTickFromData(dataPacketData) {
+    function highTickFromData(dataPacketData) {
         return (dataPacketData[6]<<24)+(dataPacketData[7]<<16)+(dataPacketData[8]<<0)+dataPacketData[9]
     }
-    function tickCounter2Wh(tick) {
-        return tick*0.3125
+    function tickCounter2Litre(tick) {
+        return tick*10
     }
 }
