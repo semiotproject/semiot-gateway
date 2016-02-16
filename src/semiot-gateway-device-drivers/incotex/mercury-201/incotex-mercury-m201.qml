@@ -22,13 +22,15 @@ SemIoTDeviceConfig {
         // TODO: mac or some id
         if (dataPacket.senderPort==listenPort) {
             // TODO: DEVICE_WORD check
+            var macAddr = macFromData(dataPacket.data)
             var tick = tickFromData(dataPacket.data)
             var kWhtick = kWhTickFromData(dataPacket.data)
             var realTick = tick+kWhtick*3200
             var tick2Wh = tickCounter2Wh(realTick)
-            deviceName = hashName("mercury-201-"+"-"+driverName+"-"+dataPacket.senderHost+"-"+dataPacket.senderPort)
+            deviceName = "mercury-201-"+"-"+driverName+"-"+macAddr
 
             var descriptionMap = {
+                '\\${MAC}':macAddr,
                 '\\${HOST}':dataPacket.senderHost,
                 '\\${PORT}':dataPacket.senderPort
             };
@@ -58,7 +60,8 @@ SemIoTDeviceConfig {
         This is ESP8266-Arduino based SemIoT device prototype for the
         Mercury-201 electric energy consumption counter.
         TODO: super ontology description.
-        Device source: udp://${HOST}:${PORT}
+        Device source: udp://${HOST}:${PORT}.
+        Device MAC address: udp://${MAC}.
     ';
     property string electricEnergyConsumptionDescSrc : '
         This is ESP8266-Arduino based SemIoT device prototype for the
@@ -87,6 +90,10 @@ SemIoTDeviceConfig {
         return (hash >>> 0).toString();
     }
 
+    function macFromData(dataPacketData) {
+        console.log("M201 MAC data=",dataPacketData[10],dataPacketData[11],dataPacketData[12],dataPacketData[13],dataPacketData[14],dataPacketData[15])
+        return dataPacketData[10]+dataPacketData[11]+'-'+dataPacketData[12]+dataPacketData[13]+'-'+dataPacketData[14]+dataPacketData[15]
+    }
     function tickFromData(dataPacketData) {
         console.log("M201 data=",(dataPacketData[0]),dataPacketData[1],dataPacketData[2],dataPacketData[3],dataPacketData[4],dataPacketData[5],dataPacketData[6],dataPacketData[7],dataPacketData[8],dataPacketData[9],dataPacketData[10])
         return (dataPacketData[4]<<8)+dataPacketData[5]

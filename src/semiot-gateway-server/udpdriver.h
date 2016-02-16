@@ -20,7 +20,7 @@ signals:
 
 public slots:
     void discoverDataSources(int port); // TODO: string config
-    void addDataSource(quint16 port, const QHostAddress & address = QHostAddress::Any);
+    void addDataSource(quint16 port, const QHostAddress &address);
     void addDriverDataSource(QVariant params);
     QString getDriverName();
 

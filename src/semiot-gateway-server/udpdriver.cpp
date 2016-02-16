@@ -16,7 +16,7 @@ void UDPDriver::discoverDataSources(int port)
 
 }
 
-void UDPDriver::addDataSource(quint16 port, const QHostAddress & address)
+void UDPDriver::addDataSource(quint16 port, const QHostAddress & address = QHostAddress::Any)
 {
     return addSocket(port,address);
 }
@@ -62,7 +62,7 @@ void UDPDriver::readPendingDatagrams()
 void UDPDriver::addSocket(quint16 port, const QHostAddress & address = QHostAddress::Any)
 {
     QUdpSocket* udpSocket = new QUdpSocket(this);
-    udpSocket->bind(address, port);
+    udpSocket->bind(port); // FIXME: address support
 
     connect(udpSocket, SIGNAL(readyRead()),this, SLOT(readPendingDatagrams()));
 
