@@ -92,7 +92,7 @@ SemIoTDeviceConfig {
 
     function macFromData(dataPacketData) {
         //console.log("M201 MAC data=",dataPacketData[10],dataPacketData[11],dataPacketData[12],dataPacketData[13],dataPacketData[14],dataPacketData[15])
-        return dataPacketData[10].toString(16)+dataPacketData[11].toString(16)+'-'+dataPacketData[12].toString(16)+dataPacketData[13].toString(16)+'-'+dataPacketData[14].toString(16)+dataPacketData[15].toString(16)
+        return dataPacketData[10].toString(16)+'-'+dataPacketData[11].toString(16)+'-'+dataPacketData[12].toString(16)+'-'+dataPacketData[13].toString(16)+'-'+dataPacketData[14].toString(16)+'-'+dataPacketData[15].toString(16)
     }
     function tickFromData(dataPacketData) {
         console.log("M201 data=",(dataPacketData[0]),dataPacketData[1],dataPacketData[2],dataPacketData[3],dataPacketData[4],dataPacketData[5],dataPacketData[6],dataPacketData[7],dataPacketData[8],dataPacketData[9],dataPacketData[10])
