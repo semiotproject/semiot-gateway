@@ -18,11 +18,12 @@ SemIoTDeviceConfig {
         // TODO: checksum?
         if (dataPacket.senderPort==listenPort) {
             //TODO: DEVICE_WORD check
+            var macAddr = macFromData(dataPacket.data)
             var tick = tickFromData(dataPacket.data)
             var highTick = highTickFromData(dataPacket.data)
             var realTick = tick+highTick*10
             var tick2Litre = tickCounter2Litre(realTick)
-            deviceName = hashName("valtec-vlf-r-i"+"-"+driverName+"-"+dataPacket.senderHost+"-"+dataPacket.senderPort)
+            deviceName = hashName("valtec-vlf-r-i"+"-"+driverName+"-"+macAddr)
 
             var descriptionMap = {
                 '\\${HOST}':dataPacket.senderHost,
@@ -81,6 +82,11 @@ SemIoTDeviceConfig {
         while(i)
           hash = (hash * 33) ^ str.charCodeAt(--i)
         return (hash >>> 0).toString();
+    }
+
+    function macFromData(dataPacketData) {
+        //console.log("M201 MAC data=",dataPacketData[10],dataPacketData[11],dataPacketData[12],dataPacketData[13],dataPacketData[14],dataPacketData[15])
+        return dataPacketData[10].toString(16)+'-'+dataPacketData[11].toString(16)+'-'+dataPacketData[12].toString(16)+'-'+dataPacketData[13].toString(16)+'-'+dataPacketData[14].toString(16)+'-'+dataPacketData[15].toString(16)
     }
 
     function tickFromData(dataPacketData) {

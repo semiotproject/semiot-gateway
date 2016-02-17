@@ -27,7 +27,7 @@ SemIoTDeviceConfig {
             var kWhtick = kWhTickFromData(dataPacket.data)
             var realTick = tick+kWhtick*3200
             var tick2Wh = tickCounter2Wh(realTick)
-            deviceName = "mercury-201-"+"-"+driverName+"-"+macAddr
+            deviceName = hashName("mercury-201"+"-"+driverName+"-"+macAddr)
 
             var descriptionMap = {
                 '\\${MAC}':macAddr,
