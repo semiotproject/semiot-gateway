@@ -21,32 +21,36 @@ SemIoTDeviceConfig {
         // TODO: checksum?
         // TODO: mac or some id
         if (dataPacket.senderPort==listenPort) {
-            // TODO: DEVICE_WORD check
-            var macAddr = macFromData(dataPacket.data)
-            var tick = tickFromData(dataPacket.data)
-            var kWhtick = kWhTickFromData(dataPacket.data)
-            var realTick = tick+kWhtick*3200
-            var tick2Wh = tickCounter2Wh(realTick)
-            deviceName = hashName("energomera-ce102r5"+"-"+driverName+"-"+macAddr)
+            console.log(dataPacket.data)
+            var deviceWord = deviceWordFromData(dataPacket.data)
+            if (deviceWord == "NRGM") {
+                // TODO: DEVICE_WORD check
+                var macAddr = macFromData(dataPacket.data)
+                var tick = tickFromData(dataPacket.data)
+                var kWhtick = kWhTickFromData(dataPacket.data)
+                var realTick = tick+kWhtick*3200
+                var tick2Wh = tickCounter2Wh(realTick)
+                deviceName = hashName("energomera-ce102r5"+"-"+driverName+"-"+macAddr)
 
-            var descriptionMap = {
-                '\\${MAC}':macAddr,
-                '\\${HOST}':dataPacket.senderHost,
-                '\\${PORT}':dataPacket.senderPort
-            };
+                var descriptionMap = {
+                    '\\${MAC}':macAddr,
+                    '\\${HOST}':dataPacket.senderHost,
+                    '\\${PORT}':dataPacket.senderPort
+                };
 
-            var electricEnergyConsumptionMap = {
-                '\\${TIMESTAMP}':dataPacket.timeStamp,
-                '\\${DATETIME}':dataPacket.dateTime,
-                '\\${kWhtick}':kWhtick
-            };
+                var electricEnergyConsumptionMap = {
+                    '\\${TIMESTAMP}':dataPacket.timeStamp,
+                    '\\${DATETIME}':dataPacket.dateTime,
+                    '\\${kWhtick}':kWhtick
+                };
 
-            descriptionDesc = replaceAll(descriptionDescSrc, descriptionMap)
-            electricEnergyConsumptionDesc = replaceAll(electricEnergyConsumptionDescSrc, electricEnergyConsumptionMap)
+                descriptionDesc = replaceAll(descriptionDescSrc, descriptionMap)
+                electricEnergyConsumptionDesc = replaceAll(electricEnergyConsumptionDescSrc, electricEnergyConsumptionMap)
 
-            // NOTE: is that ok that we decide here how to organize res pathes?
-            newDataReady("/"+deviceName+"/description",descriptionDesc)
-            newDataReady("/"+deviceName+"/electricEnergyConsumption",electricEnergyConsumptionDesc)
+                // NOTE: is that ok that we decide here how to organize res pathes?
+                newDataReady("/"+deviceName+"/description",descriptionDesc)
+                newDataReady("/"+deviceName+"/electricEnergyConsumption",electricEnergyConsumptionDesc)
+            }
         }
     }
 
@@ -86,6 +90,10 @@ SemIoTDeviceConfig {
         while(i)
           hash = (hash * 33) ^ str.charCodeAt(--i)
         return (hash >>> 0).toString();
+    }
+
+    function deviceWordFromData(dataPacketData) {
+        return String.fromCharCode(65 + dataPacketData[0])+String.fromCharCode(65 + dataPacketData[1])+String.fromCharCode(65 + dataPacketData[2])+String.fromCharCode(65 + dataPacketData[3]);
     }
 
     function macFromData(dataPacketData) {
