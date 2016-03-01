@@ -8,7 +8,7 @@
 UDPDriver::UDPDriver(bool debug, QObject *parent) : QObject(parent),
   _debug(debug)
 {
-
+    _txSocket = new QUdpSocket(this);
 }
 
 void UDPDriver::discoverDataSources(int port)
@@ -31,6 +31,16 @@ void UDPDriver::addDriverDataSource(QVariant params)
 QString UDPDriver::getDriverName()
 {
     return _driverName;
+}
+
+void UDPDriver::actuate(QVariant params)
+{
+    auto jsv = params.value<QJSValue>(); // FIXME
+    uint port = jsv.property("port").toUInt();
+    QString address = jsv.property("host").toString();
+    QByteArray data = jsv.property("data").toString().toUtf8();
+
+    sendData(data,port,QHostAddress(address));
 }
 
 void UDPDriver::readPendingDatagrams()
@@ -81,7 +91,7 @@ void UDPDriver::processTheDatagram(QByteArray * datagram, quint16 port, QHostAdd
         // qDebug()<<"port: "<<port;
         // qDebug()<<"address: "<<address;
     }
-    QVariantMap map;
+    QVariantMap map; // TODO: json?
 
     map.insert("data", data);
     map.insert("timeStamp", QDateTime::currentDateTime().toTime_t());
@@ -95,4 +105,9 @@ void UDPDriver::processTheDatagram(QByteArray * datagram, quint16 port, QHostAdd
         // qDebug()<<map;
     }
     emit newDataReady(map);
+}
+
+void UDPDriver::sendData(QByteArray datagram, quint16 port, QHostAddress address)
+{
+    _txSocket->writeDatagram(datagram, datagram.size(), address, port);
 }

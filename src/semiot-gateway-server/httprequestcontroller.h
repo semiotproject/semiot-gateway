@@ -12,6 +12,7 @@ class HttpRequestController : public HttpRequestHandler
 signals:
     void addDeviceDriverFromUrl(QUrl url);
     void addDeviceDriverFromString(QString string);
+    void newRequestReceived(QVariant params);
 public:
     explicit HttpRequestController(DataServer& ds, QObject *parent = 0);
     void service(HttpRequest& request, HttpResponse& response);

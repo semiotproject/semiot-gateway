@@ -25,4 +25,3 @@ void DeviceConfig::setDriverInitArgs(QVariant newValue)
     _driverInitArgs = newValue;
     emit driverInitArgsChanged();
 }
-

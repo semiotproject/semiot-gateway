@@ -16,6 +16,7 @@ public:
 signals:
     void newDataReady(QString resourcePath, QString value);
     void driverConnected();
+    void newRequestReceived(QVariant params);
 
 public slots:
     void addConfig(QUrl configUrl); // NOTE: return config id?

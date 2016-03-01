@@ -14,8 +14,10 @@ public:
     explicit HttpServer(DataServer& dataServer, QObject *parent = 0);
 
 signals:
+    // FIXME: shared between ws and http protocols
     void addDeviceDriverFromUrl(QUrl url);
     void addDeviceDriverFromString(QString string);
+    void newRequestReceived(QVariant params);
 
 public slots:
 

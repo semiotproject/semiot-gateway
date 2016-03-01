@@ -1,6 +1,7 @@
 #include "httprequestcontroller.h"
 #include <QDebug>
 #include <QFile>
+#include <QJsonObject>
 
 HttpRequestController::HttpRequestController(DataServer &ds, QObject *parent) : HttpRequestHandler(parent), _dataServer(ds)
 {
@@ -44,7 +45,7 @@ void HttpRequestController::service(HttpRequest &request, HttpResponse &response
     }
     else if (requestPath.startsWith("/api/systems")) {
         QString requestPathTail = requestPath;
-        requestPathTail.remove(0,QString("/api/systems").length());
+        requestPathTail.remove(0,QString("/api/systems").length()); // FIMXE: magic string
         if (requestPathTail=="") {
             response.setHeader("Content-Type", "application/json; charset=UTF-8");
             // FIXME: json string
@@ -58,11 +59,20 @@ void HttpRequestController::service(HttpRequest &request, HttpResponse &response
             response.write(systemsList.toUtf8(),true);
         }
         else if (requestPathTail.count("/")==2) {
+            QMultiMap<QByteArray,QByteArray> parameterMap = request.getParameterMap();
+            if (!parameterMap.isEmpty()) {
+                QJsonObject jsonParams {};
+                foreach (QByteArray value, parameterMap) {
+                    QString valueString = QString::fromUtf8(value);
+                    QString keyString = QString::fromUtf8(parameterMap.key(value));
+                    jsonParams.insert(keyString,valueString);
+                }
+                emit newRequestReceived(jsonParams);
+            }
             response.setHeader("Content-Type", "application/json; charset=UTF-8");
             QString resourceValue = _dataServer.getValueByResourcePath(requestPathTail);
             response.write(resourceValue.toUtf8(),true);
         }
-
     }
     else {
         response.setHeader("Content-Type", "text/plain; charset=UTF-8");

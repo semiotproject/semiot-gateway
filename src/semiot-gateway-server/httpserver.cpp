@@ -18,6 +18,7 @@ HttpServer::HttpServer(DataServer &dataServer, QObject *parent) : QObject(parent
     //TODO: set dataServer?
     connect(_requestController,SIGNAL(addDeviceDriverFromString(QString)),this,SIGNAL(addDeviceDriverFromString(QString)));
     connect(_requestController,SIGNAL(addDeviceDriverFromUrl(QUrl)),this,SIGNAL(addDeviceDriverFromUrl(QUrl)));
+    connect(_requestController,SIGNAL(newRequestReceived(QVariant)),this,SIGNAL(newRequestReceived(QVariant)));
     _listener = new HttpListener(_settings, _requestController, this);
 }
 

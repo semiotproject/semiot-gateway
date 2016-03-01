@@ -23,6 +23,7 @@ public slots:
     void addDataSource(quint16 port, const QHostAddress &address);
     void addDriverDataSource(QVariant params);
     QString getDriverName();
+    void actuate(QVariant params);
 
 private slots:
     void readPendingDatagrams();
@@ -32,7 +33,9 @@ private:
     QList<QUdpSocket*> _sockets;
     void addSocket(quint16 port, const QHostAddress & address);
     void processTheDatagram(QByteArray *datagram, quint16 port, QHostAddress *address);
+    void sendData(QByteArray datagram, quint16 port, QHostAddress address);
     bool _debug;
+    QUdpSocket* _txSocket;
 };
 
 #endif // UDPDRIVER_H

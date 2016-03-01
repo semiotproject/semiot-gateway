@@ -19,7 +19,6 @@ void DevicesConfigsLoader::addConfig(QUrl configUrl)
     else {
         continueLoading();
     }
-
 }
 
 void DevicesConfigsLoader::continueLoading()
@@ -31,8 +30,10 @@ void DevicesConfigsLoader::continueLoading()
         // TODO: driversList:
         if (object->property("driverName")==_udpDriver->getDriverName()) {
             QObject::connect(_udpDriver,SIGNAL(newDataReady(QVariant)),object,SIGNAL(newDataPacketReceived(QVariant)));
+            QObject::connect(this,SIGNAL(newRequestReceived(QVariant)),object,SIGNAL(newRequestReceived(QVariant)));
             QObject::connect(object,SIGNAL(newDataReady(QString,QString)),this,SIGNAL(newDataReady(QString,QString)));
             QObject::connect(object,SIGNAL(addDriverDataSource(QVariant)),_udpDriver,SLOT(addDriverDataSource(QVariant)));
+            QObject::connect(object,SIGNAL(actuate(QVariant)),_udpDriver,SLOT(actuate(QVariant)));
             DeviceConfig* device_object = dynamic_cast<DeviceConfig*>(object);
             if (true) {// TODO: if connect success
                 emit device_object->driverConnected();

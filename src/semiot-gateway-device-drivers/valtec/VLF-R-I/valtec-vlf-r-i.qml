@@ -45,6 +45,11 @@ SemIoTDeviceConfig {
             newDataReady("/"+deviceName+"/waterConsumption",electricEnergyConsumptionDesc)
         }
     }
+    /*
+    onNewUserInputReceived: {
+        userInput
+    }
+    */
 
     property string deviceName
 

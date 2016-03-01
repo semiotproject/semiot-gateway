@@ -20,6 +20,8 @@ signals:
     void newDataReady(QString path, QString value);
     void driverNameChanged();
     void driverInitArgsChanged();
+    void actuate(QVariant params);
+    void newRequestReceived(QVariant params);
 
 public slots:
     QString getDriverName();
