@@ -1,15 +1,17 @@
 #ifndef UDPDRIVER_H
 #define UDPDRIVER_H
 
-#include <QObject>
+#include "backmodule.h"
+//#include <QObject>
 #include <QUdpSocket>
-#include <QDateTime>
 
+/*
 #define UDP_GTW_OK "GTWOK"
 #define UDP_GTW_OK_SIZE 5
 #define UDP_GTW_PING "GTW"
+*/
 
-class UDPDriver : public QObject
+class UDPDriver : public BackModule
 {
     Q_OBJECT
 public:

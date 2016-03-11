@@ -3,15 +3,16 @@
 
 #include <QObject>
 #include <QUrl>
-// TODO: as plugin
-#include "udpdriver.h"
+#include "backmodule.h"
+// as plugin
+//#include "udpdriver.h"
 #include <QtQml>
 
 class DevicesConfigsLoader : public QObject
 {
     Q_OBJECT
 public:
-    explicit DevicesConfigsLoader(bool debug = false, QObject *parent = 0);
+    explicit DevicesConfigsLoader(QObject *parent = 0);
 
 signals:
     void newDataReady(QString resourcePath, QString value);
@@ -25,7 +26,7 @@ public slots:
 private:
     QQmlEngine* _engine;
     // TODO: modular system
-    UDPDriver * _udpDriver; // TODO: drivers list
+    BackModule * _udpDriver; // TODO: drivers list
     // FIXME: save objects list:
     QObject * object;
     QQmlComponent* component;

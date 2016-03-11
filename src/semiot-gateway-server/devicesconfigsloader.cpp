@@ -1,12 +1,15 @@
 #include "devicesconfigsloader.h"
 #include "deviceconfig.h"
+#include "udpdriver.h" // fixme
 
-DevicesConfigsLoader::DevicesConfigsLoader(bool debug, QObject *parent) : QObject(parent)
+DevicesConfigsLoader::DevicesConfigsLoader(QObject *parent) : QObject(parent)
 {
     _engine = new QQmlEngine(this);
     qmlRegisterType<DeviceConfig>("ru.semiot.gateway",0,1,"SemIoTDeviceConfig");
     //FIXME:
-    _udpDriver = new UDPDriver(debug);
+    UDPDriver* udpDriver = new UDPDriver();
+    _udpDriver = (BackModule*) udpDriver;
+
 }
 
 void DevicesConfigsLoader::addConfig(QUrl configUrl)
@@ -28,7 +31,8 @@ void DevicesConfigsLoader::continueLoading()
     } else {
         object = component->create();
         // TODO: driversList:
-        if (object->property("driverName")==_udpDriver->getDriverName()) {
+        // FIXME: driverName to moduleName
+        if (object->property("driverName")==_udpDriver->getModuleName()) {
             QObject::connect(_udpDriver,SIGNAL(newDataReady(QVariant)),object,SIGNAL(newDataPacketReceived(QVariant)));
             QObject::connect(this,SIGNAL(newRequestReceived(QVariant)),object,SIGNAL(newRequestReceived(QVariant)));
             QObject::connect(object,SIGNAL(newDataReady(QString,QString)),this,SIGNAL(newDataReady(QString,QString)));
@@ -39,6 +43,7 @@ void DevicesConfigsLoader::continueLoading()
                 emit device_object->driverConnected();
             }
         }
+        // TODO: connect DataServer here
     }
 }
 

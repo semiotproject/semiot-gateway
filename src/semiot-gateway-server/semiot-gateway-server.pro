@@ -4,34 +4,28 @@ QT -= gui
 
 TARGET = semiot-gateway-server
 CONFIG += console network
-CONFIG -= app_bundle
 
 TEMPLATE = app
 
 SOURCES += main.cpp \
-    websocketserver.cpp \
-    udpdriver.cpp \
     devicesconfigsloader.cpp \
     deviceconfig.cpp \
-    httpserver.cpp \
-    httprequestcontroller.cpp \
     dataserver.cpp
 
 HEADERS += \
-    websocketserver.h \
-    udpdriver.h \
     devicesconfigsloader.h \
     deviceconfig.h \
-    httpserver.h \
-    httprequestcontroller.h \
     dataserver.h
 
 RESOURCES += \
     res.qrc
 
-# http://stefanfrings.de/qtwebapp/index-en.html:
-include(./3rdparty/QtWebApp/httpserver/httpserver.pri) #TODO: shared lib
+include(./modules/modules.pri) #TODO: shared lib
 
 DISTFILES += \
     api.doc.json \
-    api.json
+    api.json \
+    ../../doc/semiot-gateway.qmodel
+
+LIBS += -lrdf
+LIBS += -ldataquay

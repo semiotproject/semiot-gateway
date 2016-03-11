@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QUrl>
 #include "httprequesthandler.h"
-#include "dataserver.h"
+#include "dataserver.h" // Strange architechture due to qtwebapp
 
 class HttpRequestController : public HttpRequestHandler
 {
@@ -14,10 +14,12 @@ signals:
     void addDeviceDriverFromString(QString string);
     void newRequestReceived(QVariant params);
 public:
-    explicit HttpRequestController(DataServer& ds, QObject *parent = 0);
+    explicit HttpRequestController(QObject *parent = 0);
     void service(HttpRequest& request, HttpResponse& response);
+    void setDataServer(DataServer* ds);
 private:
-    const DataServer& _dataServer;
+    DataServer* _dataServer;
+
 };
 
 #endif // HTTPREQUESTCONTROLLER_H

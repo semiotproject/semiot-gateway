@@ -1,7 +1,8 @@
 #include "dataserver.h"
+#include <QRegularExpression>
 #include <QDebug>
 
-DataServer::DataServer()
+DataServer::DataServer(QObject *parent) : QObject(parent)
 {
 
 }
@@ -41,7 +42,22 @@ QString DataServer::getSystemsList() const
 
 QString DataServer::getValueByResourcePath(QString resourcePath) const
 {
+    // TODO:
+    QRegularExpression systemRegExp;
+    // api/systems
+    systemRegExp.setPattern("^[/]api[/]systems[/]?$");
+    systemRegExp.setPattern("^[/]api[/]systems[/]list[/]?$");
+
+    // api/systems/.../system
+    systemRegExp.setPattern("^[/]api[/]systems[/]system[/]?$");
+    systemRegExp.setPattern("^[/]api[/]systems[/]system[/][0-9]+[/]?$");
+    /*
+    if (systemRegExp.match(resourcePath).hasMatch()) {
+        return getResourcesList(resourcePath);
+    }
     return _currentResourcesValues[resourcePath];
+    */
+    return QString("게이트웨이 왕!"); // TODO:
 }
 
 void DataServer::processNewData(QString resourcePath, QString value)

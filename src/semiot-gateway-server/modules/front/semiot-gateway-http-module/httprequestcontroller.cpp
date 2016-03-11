@@ -3,15 +3,19 @@
 #include <QFile>
 #include <QJsonObject>
 
-HttpRequestController::HttpRequestController(DataServer &ds, QObject *parent) : HttpRequestHandler(parent), _dataServer(ds)
+HttpRequestController::HttpRequestController(QObject *parent) : HttpRequestHandler(parent)
 {
 }
 
 void HttpRequestController::service(HttpRequest &request, HttpResponse &response)
 {
-    //TODO: separate to classes:
-    QFile answerFile;
     QString requestPath = request.getPath();
+    QString value = _dataServer->getValueByResourcePath(requestPath);
+    response.setHeader("Content-Type", "application/json; charset=UTF-8");
+    response.write(value.toUtf8(),true);
+    // TODO: response
+    /*
+    QFile answerFile;
     if (requestPath.endsWith("/")) {
         requestPath.chop(1);
     }
@@ -49,13 +53,13 @@ void HttpRequestController::service(HttpRequest &request, HttpResponse &response
         if (requestPathTail=="") {
             response.setHeader("Content-Type", "application/json; charset=UTF-8");
             // FIXME: json string
-            QString systemsList = _dataServer.getSystemsList();
+            QString systemsList = _dataServer->getSystemsList();
             response.write(systemsList.toUtf8(),true);
         }
         else if (requestPathTail.count("/")==1) {
             response.setHeader("Content-Type", "application/json; charset=UTF-8");
             // FIXME: json string
-            QString systemsList = _dataServer.getResourcesList(requestPathTail);
+            QString systemsList = _dataServer->getResourcesList(requestPathTail);
             response.write(systemsList.toUtf8(),true);
         }
         else if (requestPathTail.count("/")==2) {
@@ -70,7 +74,7 @@ void HttpRequestController::service(HttpRequest &request, HttpResponse &response
                 emit newRequestReceived(jsonParams);
             }
             response.setHeader("Content-Type", "application/json; charset=UTF-8");
-            QString resourceValue = _dataServer.getValueByResourcePath(requestPathTail);
+            QString resourceValue = _dataServer->getValueByResourcePath(requestPathTail);
             response.write(resourceValue.toUtf8(),true);
         }
     }
@@ -79,5 +83,10 @@ void HttpRequestController::service(HttpRequest &request, HttpResponse &response
         response.write("게이트웨이 왕!",true);
     }
     answerFile.close();
+    */
 }
 
+void HttpRequestController::setDataServer(DataServer *ds)
+{
+    _dataServer = ds;
+}
