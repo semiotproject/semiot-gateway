@@ -1,6 +1,6 @@
 #include "devicesconfigsloader.h"
 #include "deviceconfig.h"
-#include "udpdriver.h" // fixme
+#include "udpdriver.h" // fixme: drivers list
 
 DevicesConfigsLoader::DevicesConfigsLoader(QObject *parent) : QObject(parent)
 {

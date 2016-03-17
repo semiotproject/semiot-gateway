@@ -21,6 +21,8 @@ RESOURCES += \
     res.qrc
 
 include(./modules/modules.pri) #TODO: shared lib
+include(./utils/utils.pri) #TODO: shared lib
+#include(./digitalbazaarjsonld/libjsonld.pri)
 
 DISTFILES += \
     api.doc.json \
@@ -28,4 +30,14 @@ DISTFILES += \
     ../../doc/semiot-gateway.qmodel
 
 LIBS += -lrdf
+
 LIBS += -ldataquay
+
+# TODO: move to pkg-config or something:
+LIBS += -lraptor2
+INCLUDEPATH += /usr/include/raptor2
+DEPENDPATH += /usr/include/raptor2
+
+LIBS += -lrasqal
+INCLUDEPATH += /usr/include/rasqal
+DEPENDPATH += /usr/include/rasqal

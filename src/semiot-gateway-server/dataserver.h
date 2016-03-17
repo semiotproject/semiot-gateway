@@ -4,6 +4,8 @@
 #include <QObject>
 #include <QString>
 #include <QHash>
+#include "dataquay/Store.h"
+#include "dataquay/BasicStore.h"
 
 #define WELLKNOWNCOREPATH ".well-known/core"
 

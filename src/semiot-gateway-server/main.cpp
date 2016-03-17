@@ -46,6 +46,18 @@ int main(int argc, char *argv[])
     // TODO: linux kernel driver
     // TODO: dbus
     // TODO: systemd?
+    /*
+    monarch::data::json::JsonLd jsonld();
+
+    monarch::rt::DynamicObject input;
+    QFile file("infile");
+    file.open(QIODevice::ReadOnly);
+    QByteArray ba(file.readAll());
+
+    monarch::rt::DynamicObject options;
+    monarch::rt::DynamicObject output;
+    jsonld().fromRdf(input,options,output);
+    */
     return a.exec();
 }
 

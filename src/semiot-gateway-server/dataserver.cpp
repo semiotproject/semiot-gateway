@@ -1,10 +1,22 @@
 #include "dataserver.h"
 #include <QRegularExpression>
 #include <QDebug>
+#include "filedownloader.h"
+#include "redland.h"
+
 
 DataServer::DataServer(QObject *parent) : QObject(parent)
 {
-
+    Dataquay::BasicStore store;
+    store.setBaseUri(Dataquay::Uri("http://www.w3.org/ns/hydra/core#"));
+    // Simple test. FIXME: remove
+    QUrl testUrl("https://raw.githubusercontent.com/semiotproject/semiot-platform/master/api-gateway/src/main/resources/ru/semiot/platform/apigateway/ApiDocumentation.ttl");
+    FileDownloader fd(testUrl);
+    QString path = fd.download();
+    store.import(path,Dataquay::BasicStore::ImportPermitDuplicates);
+    Dataquay::Triple triple(Dataquay::Node(Dataquay::Uri(QUrl("http://semiot.ru/doc#EntryPoint-Sensors"))),Dataquay::Node(Dataquay::Uri(QUrl("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"))),Dataquay::Node(Dataquay::Uri(QUrl("http://www.w3.org/ns/hydra/core#Link"))));
+    store.save(QString("superstore.ttl"));
+    qDebug()<<store.contains(triple);
 }
 
 QString DataServer::getResourcesList(QString system) const

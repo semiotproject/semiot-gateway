@@ -1,0 +1,1 @@
+include(./filedownloader/filedownloader.pri)
